@@ -1,0 +1,32 @@
+Etape 1:
+
+Utilisateur abstraite
+Client
+Organisateur
+Administrateur
+enums associées
+
+Étape 2 :
+
+Lieu
+Genre
+Artiste
+Evenement
+
+Étape 3 :
+
+CategorieTicket
+Commande
+Ticket
+
+Étape 4 :
+
+Notification
+Transfert
+
+Étape 5 :
+
+héritage sur Ticket
+requête nommée
+CriteriaQuery
+données de test

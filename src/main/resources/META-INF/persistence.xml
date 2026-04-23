@@ -6,7 +6,19 @@
 
 	<persistence-unit name="dev" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-		<class>domain.Concert</class>
+		<class>domain.Utilisateur</class>
+		<class>domain.Client</class>
+		<class>domain.Organisateur</class>
+		<class>domain.Administrateur</class>
+		<class>domain.Commande</class>
+		<class>domain.GenreMusical</class>
+		<class>domain.Artiste</class>
+		<class>domain.Lieu</class>
+		<class>domain.Evenement</class>
+		<class>domain.Notification</class>
+		<class>domain.CategorieTicket</class>
+		<class>domain.Ticket</class>
+		<class>domain.Transfert</class>
 
 		<properties>
 			<property name="jakarta.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
@@ -14,7 +26,7 @@
 			<property name="jakarta.persistence.jdbc.user" value="sa" />
 			<property name="jakarta.persistence.jdbc.password" value="" />
 
-			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />
