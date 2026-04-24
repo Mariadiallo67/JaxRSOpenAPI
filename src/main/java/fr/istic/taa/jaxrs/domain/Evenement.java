@@ -8,11 +8,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Entity
 @NamedQuery(
         name = "Evenement.findByStatut",
         query = "SELECT e FROM Evenement e WHERE e.statut = :statut"
 )
-@Entity
 public class Evenement {
 
     private Long id;
