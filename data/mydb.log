@@ -1,0 +1,71 @@
+/*C2*/SET SCHEMA PUBLIC
+\u000d\u000a    drop table if exists Administrateur cascade 
+\u000d\u000a    drop table if exists Artiste cascade 
+\u000d\u000a    drop table if exists CategorieTicket cascade 
+\u000d\u000a    drop table if exists Client cascade 
+\u000d\u000a    drop table if exists client_genre_preference cascade 
+\u000d\u000a    drop table if exists Commande cascade 
+\u000d\u000a    drop table if exists Evenement cascade 
+\u000d\u000a    drop table if exists evenement_artiste cascade 
+\u000d\u000a    drop table if exists GenreMusical cascade 
+\u000d\u000a    drop table if exists Lieu cascade 
+\u000d\u000a    drop table if exists Notification cascade 
+\u000d\u000a    drop table if exists Organisateur cascade 
+\u000d\u000a    drop table if exists Ticket cascade 
+\u000d\u000a    drop table if exists Transfert cascade 
+\u000d\u000a    drop table if exists Utilisateur cascade 
+\u000d\u000a    drop sequence Artiste_SEQ if exists
+\u000d\u000a    drop sequence CategorieTicket_SEQ if exists
+\u000d\u000a    drop sequence Commande_SEQ if exists
+\u000d\u000a    drop sequence Evenement_SEQ if exists
+\u000d\u000a    drop sequence GenreMusical_SEQ if exists
+\u000d\u000a    drop sequence Lieu_SEQ if exists
+\u000d\u000a    drop sequence Notification_SEQ if exists
+\u000d\u000a    drop sequence Ticket_SEQ if exists
+\u000d\u000a    drop sequence Transfert_SEQ if exists
+\u000d\u000a    drop sequence Utilisateur_SEQ if exists
+\u000d\u000a    create sequence Artiste_SEQ start with 1 increment by 50
+\u000d\u000a    create sequence CategorieTicket_SEQ start with 1 increment by 50
+\u000d\u000a    create sequence Commande_SEQ start with 1 increment by 50
+\u000d\u000a    create sequence Evenement_SEQ start with 1 increment by 50
+\u000d\u000a    create sequence GenreMusical_SEQ start with 1 increment by 50
+\u000d\u000a    create sequence Lieu_SEQ start with 1 increment by 50
+\u000d\u000a    create sequence Notification_SEQ start with 1 increment by 50
+\u000d\u000a    create sequence Ticket_SEQ start with 1 increment by 50
+\u000d\u000a    create sequence Transfert_SEQ start with 1 increment by 50
+\u000d\u000a    create sequence Utilisateur_SEQ start with 1 increment by 50
+\u000d\u000a    create table Administrateur (\u000d\u000a        id bigint not null,\u000d\u000a        niveau varchar(255) check (niveau in ('SUPER_ADMIN','MODERATEUR')),\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table Artiste (\u000d\u000a        genreMusical_id bigint,\u000d\u000a        id bigint not null,\u000d\u000a        biographie varchar(2000),\u000d\u000a        nom varchar(255) not null,\u000d\u000a        photoUrl varchar(255),\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table CategorieTicket (\u000d\u000a        prix numeric(38,2) not null,\u000d\u000a        quantiteDisponible integer not null,\u000d\u000a        quantiteTotale integer not null,\u000d\u000a        evenement_id bigint,\u000d\u000a        id bigint not null,\u000d\u000a        libelle varchar(255) not null,\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table Client (\u000d\u000a        id bigint not null,\u000d\u000a        adresse varchar(255),\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table client_genre_preference (\u000d\u000a        client_id bigint not null,\u000d\u000a        genre_id bigint not null\u000d\u000a    )
+\u000d\u000a    create table Commande (\u000d\u000a        montantTotal numeric(38,2) not null,\u000d\u000a        client_id bigint,\u000d\u000a        dateCommande timestamp(6),\u000d\u000a        id bigint not null,\u000d\u000a        statut varchar(255) not null check (statut in ('EN_COURS','CONFIRMEE','ANNULEE','REMBOURSEE')),\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table Evenement (\u000d\u000a        capaciteTotale integer not null,\u000d\u000a        dateDebut timestamp(6),\u000d\u000a        dateFin timestamp(6),\u000d\u000a        datePublication timestamp(6),\u000d\u000a        id bigint not null,\u000d\u000a        lieu_id bigint,\u000d\u000a        organisateur_id bigint,\u000d\u000a        description varchar(3000),\u000d\u000a        statut varchar(255) not null check (statut in ('EN_ATTENTE_VALIDATION','VALIDE','ANNULE','TERMINE')),\u000d\u000a        titre varchar(255) not null,\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table evenement_artiste (\u000d\u000a        artiste_id bigint not null,\u000d\u000a        evenement_id bigint not null\u000d\u000a    )
+\u000d\u000a    create table GenreMusical (\u000d\u000a        id bigint not null,\u000d\u000a        libelle varchar(255) not null unique,\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table Lieu (\u000d\u000a        capacite integer not null,\u000d\u000a        id bigint not null,\u000d\u000a        adresse varchar(255),\u000d\u000a        nom varchar(255) not null,\u000d\u000a        pays varchar(255),\u000d\u000a        ville varchar(255) not null,\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table Notification (\u000d\u000a        lu boolean not null,\u000d\u000a        dateEnvoi timestamp(6),\u000d\u000a        destinataire_id bigint,\u000d\u000a        id bigint not null,\u000d\u000a        message varchar(2000) not null,\u000d\u000a        titre varchar(255) not null,\u000d\u000a        type varchar(255) not null check (type in ('NOUVEAU_CONCERT','RAPPEL','ANNULATION','OFFRE','TRANSFERT')),\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table Organisateur (\u000d\u000a        id bigint not null,\u000d\u000a        nomOrganisation varchar(255),\u000d\u000a        siret varchar(255),\u000d\u000a        siteWeb varchar(255),\u000d\u000a        statutOrganisateur varchar(255) check (statutOrganisateur in ('EN_ATTENTE','VALIDE','SUSPENDU')),\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table Ticket (\u000d\u000a        categorieTicket_id bigint,\u000d\u000a        commande_id bigint,\u000d\u000a        dateAchat timestamp(6),\u000d\u000a        id bigint not null,\u000d\u000a        proprietaire_id bigint,\u000d\u000a        codeQR varchar(255) not null unique,\u000d\u000a        statut varchar(255) not null check (statut in ('VALIDE','UTILISE','ANNULE','TRANSFERE')),\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table Transfert (\u000d\u000a        dateTransfert timestamp(6),\u000d\u000a        destinataire_id bigint,\u000d\u000a        expediteur_id bigint,\u000d\u000a        id bigint not null,\u000d\u000a        ticket_id bigint unique,\u000d\u000a        statut varchar(255) not null check (statut in ('EN_ATTENTE','ACCEPTE','REFUSE')),\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    create table Utilisateur (\u000d\u000a        dateInscription date,\u000d\u000a        id bigint not null,\u000d\u000a        email varchar(255) not null unique,\u000d\u000a        motDePasse varchar(255) not null,\u000d\u000a        nom varchar(255) not null,\u000d\u000a        prenom varchar(255) not null,\u000d\u000a        statutCompte varchar(255) not null check (statutCompte in ('ACTIF','SUSPENDU','BANNI')),\u000d\u000a        telephone varchar(255),\u000d\u000a        primary key (id)\u000d\u000a    )
+\u000d\u000a    alter table Administrateur \u000d\u000a       add constraint FKdmj1rsd0ke7e076tdtmx86pfc \u000d\u000a       foreign key (id) \u000d\u000a       references Utilisateur
+\u000d\u000a    alter table Artiste \u000d\u000a       add constraint FKr2jr8lhd3r7ovo1m9adf7q65n \u000d\u000a       foreign key (genreMusical_id) \u000d\u000a       references GenreMusical
+\u000d\u000a    alter table CategorieTicket \u000d\u000a       add constraint FKt3prnmac5u2damle6jrsk8ix6 \u000d\u000a       foreign key (evenement_id) \u000d\u000a       references Evenement
+\u000d\u000a    alter table Client \u000d\u000a       add constraint FK31jffco39wivno1u5a6flswnt \u000d\u000a       foreign key (id) \u000d\u000a       references Utilisateur
+\u000d\u000a    alter table client_genre_preference \u000d\u000a       add constraint FKkfjq2dlu3ui22lcqbv8n4bet6 \u000d\u000a       foreign key (genre_id) \u000d\u000a       references GenreMusical
+\u000d\u000a    alter table client_genre_preference \u000d\u000a       add constraint FKnjb5a1p4h1xrenu3kvsh3sp45 \u000d\u000a       foreign key (client_id) \u000d\u000a       references Client
+\u000d\u000a    alter table Commande \u000d\u000a       add constraint FKvulim1yo1bvjsxck8kblj7mu \u000d\u000a       foreign key (client_id) \u000d\u000a       references Client
+\u000d\u000a    alter table Evenement \u000d\u000a       add constraint FK52mshtjgmrppf9tkrjle7opn0 \u000d\u000a       foreign key (lieu_id) \u000d\u000a       references Lieu
+\u000d\u000a    alter table Evenement \u000d\u000a       add constraint FKq3rhcjv5nwm08c2sfj4pjr920 \u000d\u000a       foreign key (organisateur_id) \u000d\u000a       references Organisateur
+\u000d\u000a    alter table evenement_artiste \u000d\u000a       add constraint FK9w26v7r4ji9ashmwang7a72ba \u000d\u000a       foreign key (artiste_id) \u000d\u000a       references Artiste
+\u000d\u000a    alter table evenement_artiste \u000d\u000a       add constraint FKncxtip8l1rx70clpgrei12ii3 \u000d\u000a       foreign key (evenement_id) \u000d\u000a       references Evenement
+\u000d\u000a    alter table Notification \u000d\u000a       add constraint FK4324ts3f2v3u6g02js9gt7mlm \u000d\u000a       foreign key (destinataire_id) \u000d\u000a       references Utilisateur
+\u000d\u000a    alter table Organisateur \u000d\u000a       add constraint FKj67cirdy2sicj46b6l71fleou \u000d\u000a       foreign key (id) \u000d\u000a       references Utilisateur
+\u000d\u000a    alter table Ticket \u000d\u000a       add constraint FKe1xqxnjn0gds03evu4mhsa8n0 \u000d\u000a       foreign key (categorieTicket_id) \u000d\u000a       references CategorieTicket
+\u000d\u000a    alter table Ticket \u000d\u000a       add constraint FK45s6sssj81bjgshjmgdl5xdkv \u000d\u000a       foreign key (commande_id) \u000d\u000a       references Commande
+\u000d\u000a    alter table Ticket \u000d\u000a       add constraint FKnn1o6wts8yqkouo44y6k9xtu9 \u000d\u000a       foreign key (proprietaire_id) \u000d\u000a       references Client
+\u000d\u000a    alter table Transfert \u000d\u000a       add constraint FKjephnlmdcmt33w6hsu9alb4vs \u000d\u000a       foreign key (destinataire_id) \u000d\u000a       references Client
+\u000d\u000a    alter table Transfert \u000d\u000a       add constraint FK8vg6rq8yxcl8u0uosvvnynmwl \u000d\u000a       foreign key (expediteur_id) \u000d\u000a       references Client
+\u000d\u000a    alter table Transfert \u000d\u000a       add constraint FKo1b4vjka51bjbir4oouiyhf0g \u000d\u000a       foreign key (ticket_id) \u000d\u000a       references Ticket
+DISCONNECT
