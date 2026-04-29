@@ -28,12 +28,12 @@ public class CommandeDao extends GenericDao<Commande> {
         ).setParameter("statut", statut).getResultList();
     }
 
-    // Méthode métier
+
     public List<Commande> findCommandesConfirmees() {
+
         return findByStatut(StatutCommande.CONFIRMEE);
     }
 
-    // Méthode métier
     public BigDecimal calculerMontantTotalClient(Long clientId) {
         BigDecimal total = em.createQuery(
                 "SELECT COALESCE(SUM(c.montantTotal), 0) FROM Commande c WHERE c.client.id = :clientId",
@@ -43,7 +43,6 @@ public class CommandeDao extends GenericDao<Commande> {
         return total;
     }
 
-    // Méthode métier
     public long compterCommandesClient(Long clientId) {
         return em.createQuery(
                 "SELECT COUNT(c) FROM Commande c WHERE c.client.id = :clientId",

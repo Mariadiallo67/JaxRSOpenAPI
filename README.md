@@ -1,149 +1,113 @@
-## JaxRS + openAPI
+# **Template de projet pour le TP JPA: API Vente de Tickets de Concert**
 
-1. Import this project in your IDE, 
-2. Start the database
-3. Start the database viewer
-4. Start the backend. There is a main class to start the backend
+## **Description**
 
+Ce projet est une API REST développée en Java utilisant JPA (Hibernate) et RESTEasy (JAX-RS) permettant de gérer une plateforme de vente de tickets de concert.
 
+L’application permet :
 
+* la gestion des événements (concerts)
+* la gestion des utilisateurs (clients, organisateurs, administrateurs)
+* l’achat et la gestion des tickets
+* le suivi des commandes
+* le transfert de tickets
+* la gestion des notifications
 
-# Task Open API Integration 
+## **Architecture du projet**
+Le projet suit une architecture en couches :
 
-Now, we would like to ensure that our API can be discovered. The OpenAPI Initiative (OAI) was created by a consortium of forward-looking industry experts who recognize the immense value of standardizing on how REST APIs are described. As an open governance structure under the Linux Foundation, the OAI is focused on creating, evolving and promoting a vendor neutral description format. 
+Controller (REST)
+     ↓
+Service (logique métier)
+     ↓
+DAO (accès aux données)
+     ↓
+JPA / Hibernate
+     ↓
+Base de données (HSQLDB / MySQL)
 
-APIs form the connecting glue between modern applications. Nearly every application uses APIs to connect with corporate data sources, third party data services or other applications. Creating an open description format for API services that is vendor neutral, portable and open is critical to accelerating the vision of a truly connected world.
+## **Modèle métier**
 
-To do this integration first, I already add a dependencies to openAPI libraries. 
+**### Héritage**
+Utilisateur (abstrait)
+    ── Client
+    ── Organisateur
+    ── Administrateur
 
-```xml
-		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-jaxrs2-jakarta</artifactId>
-			<version>2.2.15</version>
-		</dependency>
+### **Entités principales**
+* Utilisateur
+* Client
+* Organisateur
+* Administrateur
+* Evenement
+* Lieu
+* Artiste
+* GenreMusical
+* CategorieTicket
+* Ticket
+* Commande
+* Notification
+* Transfert
 
-		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
-			<version>2.2.15</version>
-		</dependency>
-```
+### **Relations importantes**
+* Organisateur → Evenement (1 → N)
+* Evenement → Lieu (N → 1)
+* Evenement → Artiste (N → N)
+* Evenement → CategorieTicket (1 → N)
+* CategorieTicket → Ticket (1 → N)
+* Commande → Ticket (1 → N)
+* Client → Commande (1 → N)
+* Ticket → Client (propriétaire)
+* Ticket → Transfert (1 → 0..1)
 
-Next you have to add OpenAPI Resource to your application
+## **Documentation API (Swagger)**
+Pour la documentation API (Swagger) j'ai crée une classe Rest SwaggerUiResource pour avoir l'interface du swagger.
+http://localhost:8081/api/docs
 
-Your application could be something like that. 
+## **Endpoints principaux**
 
-```java
-@ApplicationPath("/")
-public class RestApplication extends Application {
+Chaque entité du modèle métier dispose de son propre controller REST, dans lequel les opérations CRUD (Create, Read, Update, Delete) ont été implémentées.
 
-	@Override
-	public Set<Class<?>> getClasses() {
-		final Set<Class<?>> resources = new HashSet<>();
+En complément, j'ai ajoutée des endpoints métier sur certaines ressources: 
+### **Evenements**
 
+| Méthode | URL                                           | Description                                          |
+|---------|-----------------------------------------------|------------------------------------------------------|
+| GET     | /api/evenements/capacite/{min}                | Rechercher les événements avec une capacité minimale |
+| GET     | /api/evenements/organisateur/{organisateurId} | Lister les evenements d'un organisateur              |
+| GET     | /api/evenements/avenir                        | Événements à venir                                   |
+| GET     | /api/evenements/ville/{ville}                 | Recherche evenement par ville                        |
+| GET     | /api/evenements/valides                       | Événements validés                                   |
+| GET     | /api/evenements/statut/{statut}               | Rechercher les événements par statut                 |
 
-		// SWAGGER endpoints
-		resources.add(OpenApiResource.class);
+### **### Commandes**
 
-        //Your own resources. 
-        resources.add(PersonResource.class);
-....
-		return resources;
-	}
-}
-```
+| Méthode | URL                                            | Description                             |
+|---------|------------------------------------------------|-----------------------------------------|
+| GET     | /api/commandes/client/{clientId}               | Liste des commandes d'un client         |
+| PUT     | /api/commandes/{id}/{annuler}                  | Annuler une commande                    |
+| GET     | /api/commandes/confirmees                      | Événements à venir                      |
+| GET     | /api/commandes/client/{clientId}/montant-total | Montant total des commandes d'un client |
+| GET     | /api/commandes/client/{clientId}/count         | Nombre de commande client               |
+| GET     | /api/commandes/statut/{statut}                 | Rechercher les commandes par statut     |
 
-Next start your server, you must have your api description available at [http://localhost:8080/openapi.json](http://localhost:8080/openapi.json)
+### **Tickets**
 
-### Integrate Swagger UI. 
+| Méthode | URL                                        | Description                              |
+|---------|--------------------------------------------|------------------------------------------|
+| GET     | /api/tickets/evenement/{evenementId}/count | Compter les ticket vendus pour evenement |
+| GET     | /api/tickets/categorie/{categorieId}       | Tickets par catégorie                    |
+| GET     | /api/tickets/proprietaire/{id}             | Tickets d’un client                      |
+| GET     | /api/tickets/code/{codeQR}                 | Ticket par codeQR                        |
+| PUT     | /api/tickets/{id}/utiliser                 | Utiliser un ticket                       |
+| PUT     | /api/tickets/{id}/transferer/{clientId}    | Transférer un ticket                     |
 
-Next we have to integrate Swagger UI. We will first download it.
-https://github.com/swagger-api/swagger-ui
+## **DAO**
+Chaque entité du modèle métier dispose de sa propre **DAO**, dans laquelle les opérations classiques de **CRUD** ont été implémentées.
 
-Copy dist folder content in src/main/webapp/swagger in your project. 
+Les DAO de **Evenement**, **Commande** et **Ticket** ont été enrichies afin de répondre aux exigences du projet et contiennent :
 
-Edit index.html file to automatically load your openapi.json file. 
-
-At the end of the index.html, your must have something like that.
-
-```js
-   // Build a system
-      const ui = SwaggerUIBundle({
-        url: "http://localhost:8080/openapi.json",
-        dom_id: '#swagger-ui',
-        
-        ...
-```
-
-Next add a new resources to create a simple http server when your try to access to http://localhost:8080/api/.
-
-This new resources can be developped as follows
-
-```java
-package app.web.rest;
-
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.util.logging.Logger;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
-@Path("/api")
-public class SwaggerResource {
-
-    private static final Logger logger = Logger.getLogger(SwaggerResource.class.getName());
-
-    @GET
-    public byte[] Get1() {
-        try {
-            return Files.readAllBytes(FileSystems.getDefault().getPath("src/main/webapp/swagger/index.html"));
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    @GET
-    @Path("{path:.*}")
-    public byte[] Get(@PathParam("path") String path) {
-        try {
-            return Files.readAllBytes(FileSystems.getDefault().getPath("src/main/webapp/swagger/"+path));
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-}
-```
-
-Add this new resources in your application
-
-```java
-@ApplicationPath("/")
-public class RestApplication extends Application {
-
-
-	@Override
-	public Set<Class<?>> getClasses() {
-		final Set<Class<?>> resources = new HashSet<>();
-
-
-		// SWAGGER endpoints
-		resources.add(OpenApiResource.class);
-		resources.add(PersonResource.class);
-        //NEW LINE TO ADD
-		resources.add(SwaggerResource.class);
-
-		return resources;
-	}
-}
-```
-
-Restart your server and access to http://localhost:8080/api/, you should access to a swagger ui instance that provides documentation on your api. 
-
-You can follow this guide to show how you can specialise the documentation through annotations.
-
-https://github.com/swagger-api/swagger-samples/blob/2.0/java/java-resteasy-appclasses/src/main/java/io/swagger/sample/resource/PetResource.java
+* des requêtes JPQL
+* des requêtes nommées (*Named Queries*)
+* des Criteria Queries
+* plusieurs méthodes métier spécifiques à l’application

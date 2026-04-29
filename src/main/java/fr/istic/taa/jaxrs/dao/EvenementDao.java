@@ -19,7 +19,6 @@ public class EvenementDao  extends GenericDao<Evenement> {
         super(em, Evenement.class);
     }
 
-    // Requête JPQL  Trouver un evenement par ville
     public List<Evenement> findByVille(String ville) {
         return em.createQuery(
                         "SELECT e FROM Evenement e WHERE e.lieu.ville = :ville",
@@ -35,7 +34,7 @@ public class EvenementDao  extends GenericDao<Evenement> {
                 .getResultList();
     }
 
-    // Criteria Query
+
     public List<Evenement> findByCapaciteMin(int capaciteMin) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Evenement> cq = cb.createQuery(Evenement.class);
@@ -47,7 +46,7 @@ public class EvenementDao  extends GenericDao<Evenement> {
         return em.createQuery(cq).getResultList();
     }
 
-    // Méthode métier
+
     public List<Evenement> findEvenementsValides() {
         return em.createQuery(
                         "SELECT e FROM Evenement e WHERE e.statut = :statut",
@@ -56,7 +55,7 @@ public class EvenementDao  extends GenericDao<Evenement> {
                 .getResultList();
     }
 
-    // Méthode métier
+
     public List<Evenement> findByOrganisateur(Long organisateurId) {
         return em.createQuery(
                         "SELECT e FROM Evenement e WHERE e.organisateur.id = :id",
@@ -65,7 +64,7 @@ public class EvenementDao  extends GenericDao<Evenement> {
                 .getResultList();
     }
 
-    // Méthode métier
+
     public List<Evenement> findEvenementsAVenir() {
         return em.createQuery(
                 "SELECT e FROM Evenement e WHERE e.dateDebut > :now ORDER BY e.dateDebut ASC",
